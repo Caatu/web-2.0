@@ -1,0 +1,28 @@
+<!-- templates/base.html -->
+{% extends 'bootstrap.html' %} 
+{% load bootstrap3 %} 
+{% block bootstrap3_title %}Catu os dados{% endblock %} {% block bootstrap3_content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+          <nav class="navbar navbar-expand-lg navbar bg-light static-top">
+            <a class="navbar-brand" href="/">CATU
+              <small>OS DADOS</small>
+            </a>
+            {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right">
+              <li><a class="btn btn-outline-info" href="{% url 'logout' %}">Sair</a> </li>
+            </ul>
+              
+            {% endif %}
+          </nav>
+        </div>
+      </div>
+  <div class="row">
+    <div class="col-md-12">
+      {% block content %} {% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

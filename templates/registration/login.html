@@ -1,0 +1,15 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %} {% load bootstrap3 %} {% block bootstrap3_title %}Login{% endblock %} {% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4" align="center">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button class="btn btn-primary" type="submit">Logar</button>
+            <a class="btn btn-outline-info" href="{% url 'signup' %}" role="button">Registrar</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

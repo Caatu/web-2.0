@@ -1,0 +1,13 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %} {% block bootstrap3_title %}Home{% endblock %} {% block content %}
+<h2>Unidade: {{ unit.name|title }}</h2>
+
+<ul>
+  {% for item in locals %}
+  <li>
+    <a href="{% url 'sensors' unit.id item.id %}">{{ item.name }}</a>
+  </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
