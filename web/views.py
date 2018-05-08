@@ -32,9 +32,10 @@ def sensors(request, unidade_pk ,local_pk):
         return HttpResponseForbidden()
     collectors = models.Colector.objects.filter(local=local)
     sensors_list = []
-    for collector in collectors:
+    for index, collector in enumerate(collectors):
         sensors = models.Sensor.objects.filter(colector=collector)
         sensors_list.extend(sensors)
+        setattr(collector, 'quantity', len(collector.sensors.all()))
     param = {
         'unit': unidade,
         'local': local,
@@ -42,3 +43,19 @@ def sensors(request, unidade_pk ,local_pk):
         'sensors': sensors_list,
     }
     return render(request, 'sensors.html', param)
+
+
+@login_required
+def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
+    unidade = get_object_or_404(models.Unit, pk=unidade_pk)
+    local = get_object_or_404(models.Local, pk=local_pk)
+    if(unidade.user != request.user):
+        return HttpResponseForbidden()
+    measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk)
+    param = {
+        'measurements': measurements,
+        'unit': unidade,
+        'local': local,
+    }
+    return render(request, 'measurements_sensor.html', param)
+

@@ -1,13 +1,17 @@
 <!-- templates/home.html-->
 {% extends 'base.html' %} {% block bootstrap3_title %}Home{% endblock %} {% block content %}
-<h2>Unidade: {{ unit.name|title }}</h2>
+<div class="text-center">
+  <h3>Locais:</h3>
+  <hr>
+  <h2>
+    <small>Unidade: {{ unit.name|title }}</small>
+  </h2>
+  <hr>
 
-<ul>
+</div>
+
+<div class="col-md-offset-3 col-md-6">
   {% for item in locals %}
-  <li>
-    <a href="{% url 'sensors' unit.id item.id %}">{{ item.name }}</a>
-  </li>
-  {% endfor %}
-</ul>
-
-{% endblock %}
+  <a href="{% url 'sensors' unit.id item.id %}" class="btn btn-info btn-lg">{{ item.name }}</a>
+  {% endfor %} {% endblock %}
+</div>

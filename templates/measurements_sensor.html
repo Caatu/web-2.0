@@ -1,0 +1,19 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %} {% block bootstrap3_title %}Home{% endblock %} {% block content %}
+<div class="text-center">
+  <h3>Sensores e Coletores:</h3>
+  <hr>
+  <h2>
+    <small>Unidade: {{ unit.name|title }}
+      <br> Local: {{ local.name|title }}</small>
+  </h2>
+  <hr>
+</div>
+
+<ul>
+    {% for measurement in measurements %}
+    <li> {{ measurement }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
