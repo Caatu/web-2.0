@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
+from django.core import serializers
 import web.models as models
 
 @login_required
@@ -59,3 +60,18 @@ def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
     }
     return render(request, 'measurements_sensor.html', param)
 
+@login_required
+def measurements_all(request, unidade_pk, local_pk):
+    unidade = get_object_or_404(models.Unit, pk=unidade_pk)
+    local = get_object_or_404(models.Local, pk=local_pk)
+    if(unidade.user != request.user):
+        return HttpResponseForbidden()
+    measurements = []
+    collectors = models.Colector.objects.filter(local=local)
+    for collector in collectors:
+        sensors = models.Sensor.objects.filter(colector=collector)
+        for sensor in sensors:
+            measurements.extend(models.SensorMeasure.objects.filter(sensor=sensor))
+    data = serializers.serializer('json', measurements)
+    return data
+    
