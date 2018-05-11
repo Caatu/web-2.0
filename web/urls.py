@@ -11,6 +11,6 @@ urlpatterns = [
     path('unidade/<int:unidade_pk>/local/<int:local_pk>/sensor/<int:sensor_pk>/measurements/',
          views.measurements_sensor, name='measurements_sensor'),
 
-    path('/ajax/sensor/<int:sensor_pk>',
+    path('ajax/sensor/<int:sensor_pk>',
          views.measurements_sensor_ajax, name='measurements_sensor_ajax')
 ]

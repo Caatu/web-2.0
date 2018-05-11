@@ -1,19 +1,104 @@
 <!-- templates/home.html-->
 {% extends 'base.html' %} {% block bootstrap3_title %}Medições{% endblock %} {% block content %}
 <div class="text-center">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.js"></script>
   <h3>Sensores e Coletores:</h3>
   <hr>
   <h2>
     <small>Unidade: {{ unit.name|title }}
-      <br> Local: {{ local.name|title }}</small>
+      <br> Local: {{ local.name|title }}
+      <br> Sensor: {{ sensor.name|title }}</small>
   </h2>
   <hr>
 </div>
+<div class="row">
+  <div class="col-md-2 col-md-offset-2">
+    <div class="panel panel-primary text-center">
+      <div class="panel-heading">
+        <b>Maximo</b>
+      </div>
+      <div class="panel-body">
+        <h3 style="margin-top:10px;">{{ max|floatformat }}
+          <br>
+          <small> celsius</small>
+        </h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-primary text-center">
+      <div class="panel-heading">
+        <b>Minimo</b>
+      </div>
+      <div class="panel-body">
+        <h3 style="margin-top:10px;">{{ min|floatformat }}
+          <br>
+          <small> celsius</small>
+        </h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-primary text-center">
+      <div class="panel-heading">
+        <b>Média</b>
+      </div>
+      <div class="panel-body">
+        <h3 style="margin-top:10px;">{{ avg|floatformat }}
+          <br>
+          <small> celsius</small>
+        </h3>
+      </div>
+    </div>
+  </div>
+</div>
 
-<ul>
-    {% for measurement in measurements %}
-    <li> {{ measurement }}</li>
-    {% endfor %}
-</ul>
+<canvas id="sensorChart" height="70"></canvas>
+<script>
+  var ctx = document.getElementById("sensorChart");
+  var data = JSON.parse('{{ data|safe }}');
+  var chart = new Chart(ctx, {
+    type: 'scatter',
+    data: data,
+    options: {
+      elements: {
+        line: {
+          steppedLine: 'after',
+          cubicInterpolationMode: 'default',
+        }
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            callback: function (value) {
+              return new Date(value).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+            },
+          },
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
-{% endblock %}
+            if (label) {
+              label += (': ');
+            }
+            label += new Date(tooltipItem.xLabel).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+            label += ' - ' + tooltipItem.yLabel;
+            return label;
+          },
+          labelColor: function (tooltipItem, chart) {
+            return {
+              borderColor: 'rgb(255, 0, 0)',
+              backgroundColor: 'rgb(255, 0, 0)'
+            }
+          },
+          labelTextColor: function (tooltipItem, chart) {
+            return '#543453';
+          }
+        }
+      }
+    }
+  });
+</script> {% endblock %}
