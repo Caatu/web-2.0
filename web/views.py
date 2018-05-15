@@ -10,6 +10,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Max, Min, Avg
 import web.models as models
+from web.forms import UnitForm
 
 
 class CustomSerializer(Serializer):
@@ -20,24 +21,31 @@ class CustomSerializer(Serializer):
 @login_required
 def home(request):
     param = {
-        'units': models.Unit.objects.filter(user=request.user)
+        'units': models.Unit.objects.filter(user=request.user),
+        'form': UnitForm()
     }
     return render(request, 'home.html', param)
 
 
 @login_required
-def new_unit(request):
+def unit_stuff(request):
     if request.method == 'POST':
-        form = UnitForm(request.form)
+        form = UnitForm(request.POST)
         if form.is_valid():
-            unit = Unit.create(request.user, form.data['name'])
+            unit = models.Unit(user=request.user, name=form.data['name'])
             unit.save()
             param = {
-                'units': models.Unit.objects.filter(user=request.user)
+                'units': models.Unit.objects.filter(user=request.user),
+                'form': UnitForm()
             }
-            return render(request, 'home.html', param)
+            return redirect('home')
         else:
             return HttpResponse(status=406)
+    elif request.method == 'DELETE':
+        import ipdb; ipdb.set_trace()
+        unit = get_object_or_404(models.Unit, pk=request.pk)
+        unit.delete()
+        return redirect('home')
     else:
         return HttpResponse(status=405)
 
@@ -77,9 +85,6 @@ def sensors(request, unidade_pk, local_pk):
 
 @login_required
 def measurements_sensor_ajax(request, sensor_pk):
-    """
-        Eu sei que esta uma porra.. mas funciona.
-    """
     measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk)
     return JsonResponse(
         get_sensor_data(measurements),

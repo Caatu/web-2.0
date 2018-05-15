@@ -1,5 +1,5 @@
 <!-- templates/home.html-->
-{% extends 'base.html' %} {% block bootstrap3_title %}Home{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load bootstrap3 %} {% block bootstrap3_title %}Home{% endblock %} {% block content %}
 <script type="text/javascript">
   $('#unitModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
@@ -27,7 +27,9 @@
   {% endfor %}
 </div>
 <div class="col-md-1">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#unitModal" data-whatever="@mdo">Nova Unidade</button>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#unitModal" data-whatever="@mdo">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+  </button>
 </div>
 
 <div class="modal fade" id="unitModal" tabindex="-1" role="dialog" aria-labelledby="unitModalLabel" aria-hidden="true">
@@ -40,15 +42,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="submit" method="post">
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Nome:</label>
-            <input type="text" class="form-control" id="unit-name">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Criar</button>
-          </div>
+        <form action="{% url 'nova_unidade' %}" method="post">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          <button class="btn btn-primary" type="submit">Cadastrar</button>
         </form>
       </div>      
     </div>

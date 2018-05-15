@@ -18,9 +18,12 @@ class BaseModel(models.Model):
 
 # Create your models here.
 class Unit(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name = "Nome")
     user = models.ForeignKey(User, related_name="units",
                              on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = "Unidade"
+        unique_together = ('name','user')
 
 
 # Mudar o nome Local pois locals é reservado
