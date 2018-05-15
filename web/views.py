@@ -88,7 +88,6 @@ def get_sensor_data(measurements):
                 parser.parse(d['fields']['created_at']).replace(tzinfo=None)
             )
         }
-        print("chamou aqui")
         return_data['data'].append(json_dict)
     return {'datasets': [return_data]}
 
