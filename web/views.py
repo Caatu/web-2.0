@@ -26,6 +26,23 @@ def home(request):
 
 
 @login_required
+def new_unit(request):
+    if request.method == 'POST':
+        form = UnitForm(request.form)
+        if form.is_valid():
+            unit = Unit.create(request.user, form.data['name'])
+            unit.save()
+            param = {
+                'units': models.Unit.objects.filter(user=request.user)
+            }
+            return render(request, 'home.html', param)
+        else:
+            return HttpResponse(status=406)
+    else:
+        return HttpResponse(status=405)
+
+
+@login_required
 def local(request, pk):
     unidade = get_object_or_404(models.Unit, pk=pk)
     if unidade.user != request.user:
