@@ -31,6 +31,8 @@ class Local(BaseModel):
     name = models.CharField(max_length=255)
     unit = models.ForeignKey(
         Unit, related_name="locals", on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = "Local"
 
 
 class Colector(BaseModel):

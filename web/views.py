@@ -6,11 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
 from django.core.serializers.json import Serializer
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Max, Min, Avg
 import web.models as models
-from web.forms import UnitForm
+from web.forms import UnitForm, LocalForm
 
 
 class CustomSerializer(Serializer):
@@ -41,9 +41,15 @@ def unit_stuff(request):
             return redirect('home')
         else:
             return HttpResponse(status=406)
-    elif request.method == 'DELETE':
-        import ipdb; ipdb.set_trace()
-        unit = get_object_or_404(models.Unit, pk=request.pk)
+    else:
+        return HttpResponse(status=405)
+
+
+@login_required
+def del_unit(request, pk):
+    #import ipdb; ipdb.set_trace()
+    if request.method == 'POST':
+        unit = get_object_or_404(models.Unit, pk=pk)
         unit.delete()
         return redirect('home')
     else:
@@ -57,10 +63,37 @@ def local(request, pk):
         return HttpResponseForbidden()
     param = {
         'unit': unidade,
-        'locals': models.Local.objects.filter(unit=pk)
+        'locals': models.Local.objects.filter(unit=pk),
+        'form': LocalForm()
     }
     return render(request, 'locals.html', param)
 
+
+@login_required
+def novo_local(request, pk):
+    if request.method == 'POST':
+        unidade = get_object_or_404(models.Unit, pk=pk)
+        if unidade.user != request.user:
+            return HttpResponseForbidden()
+        form = LocalForm(request.POST)
+        if form.is_valid():
+            local = models.Local(unit=unidade, name=form.data['name'])
+            local.save()
+            return redirect('locals', unidade.id)
+        else:
+            return HttpResponse(status=406)
+    else:
+        return HttpResponse(status=405)    
+
+
+@login_required
+def del_local(request, pk_unit, pk_local):
+    if request.method == 'POST':
+        local = get_object_or_404(models.Local, pk=pk_local)
+        local.delete()
+        return redirect('locals', pk_unit)
+    else:
+        return HttpResponse(status=405)
 
 @login_required
 def sensors(request, unidade_pk, local_pk):
