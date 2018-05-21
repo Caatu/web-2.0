@@ -28,9 +28,6 @@ def on_message(client, userdata, message):
             colector = None
         if colector:
             data = json.loads(str(message.payload.decode("utf-8")))
-            print(topics) 
-            #isso é só para poder commitar
-            
             sensor_name = topics[3]
             sensor_type = topics[4]
             try:
@@ -62,7 +59,6 @@ def on_message(client, userdata, message):
         print(Colector.objects.filter(identify=topics[2]))
 
 def run():
-    print("To rodando, Ta?")
     brokerUserName = "gustavoguerino2@gmail.com"
     brokerPassword = "66db79f5"
     brokerApi = "mqtt.dioty.co"
