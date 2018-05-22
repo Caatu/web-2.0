@@ -19,10 +19,6 @@ class SensorAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Sensor, SensorAdmin)
 
-class AlertAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Alert, AlertAdmin)
-
 class SensorTypeAdmin(admin.ModelAdmin):
     pass
 admin.site.register(SensorType, SensorTypeAdmin)

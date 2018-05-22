@@ -64,11 +64,3 @@ class SensorMeasure(BaseModel):
 
     def __str__(self):
         return "{} {}".format(self.measurement_value, self.unit_of_measurement)
-
-
-class Alert(BaseModel):
-    name = models.CharField(max_length=255)
-    max_temp = models.CharField(max_length=255)
-    min_temp = models.CharField(max_length=255)
-    sensor = models.ForeignKey(
-        Sensor, related_name="alertas", on_delete=models.CASCADE)
