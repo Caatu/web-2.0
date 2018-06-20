@@ -83,7 +83,7 @@ def novo_local(request, pk):
         else:
             return HttpResponse(status=406)
     else:
-        return HttpResponse(status=405)    
+        return HttpResponse(status=405)
 
 
 @login_required
@@ -94,6 +94,7 @@ def del_local(request, pk_unit, pk_local):
         return redirect('locals', pk_unit)
     else:
         return HttpResponse(status=405)
+
 
 @login_required
 def sensors(request, unidade_pk, local_pk):
@@ -118,12 +119,12 @@ def sensors(request, unidade_pk, local_pk):
 
 @login_required
 def measurements_sensor_ajax(request, sensor_pk):
-    measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk)
+    measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk, created_at__gte=(datetime.datetime.now() - datetime.timedelta(minutes=20)))
+    print("dados", measurements)
     return JsonResponse(
         get_sensor_data(measurements),
         safe=False
     )
-
 
 def get_sensor_data(measurements):
     data = json.loads(
@@ -133,8 +134,8 @@ def get_sensor_data(measurements):
     return_data = {
         'label': 'Ultimos Dados',
         'data': [],
-        'backgroundColor': 'rgba(54, 162, 235, 0.2)',
-        'borderColor': 'rgba(54, 162, 235, 0.2)',
+        'backgroundColor': 'rgba(54, 162, 255, 0.5)',
+        'borderColor': 'rgba(0, 100, 255, 1)',
     }
     for d in data:
         json_dict = {
@@ -149,6 +150,9 @@ def get_sensor_data(measurements):
 
 def unix_time_millis(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
+    print(dt)
+    print(epoch)
+    print(dt-epoch)
     return (dt - epoch).total_seconds() * 1000.0
 
 
@@ -158,7 +162,7 @@ def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
     local = get_object_or_404(models.Local, pk=local_pk)
     sensor = get_object_or_404(models.Sensor, pk=sensor_pk)
 
-    measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk)
+    measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk, created_at__gte=(datetime.datetime.now() - datetime.timedelta(minutes=2)))
     param = {
         'unit': unidade,
         'local': local,
@@ -166,7 +170,9 @@ def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
         'max': measurements.aggregate(Max('measurement_value'))['measurement_value__max'],
         'min': measurements.aggregate(Min('measurement_value'))['measurement_value__min'],
         'avg': measurements.aggregate(Avg('measurement_value'))['measurement_value__avg'],
-        'data': json.dumps(get_sensor_data(measurements))
+        'data': json.dumps(get_sensor_data(measurements)),
+        'mindate':int(unix_time_millis(parser.parse(str(measurements.first().created_at)).replace(tzinfo=None))),
+        'maxdate':int(unix_time_millis(parser.parse(str(measurements.last().created_at)).replace(tzinfo=None))),
     }
     return render(request, 'measurements_sensor.html', param)
 

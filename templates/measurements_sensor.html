@@ -1,21 +1,11 @@
 <!-- templates/home.html-->
 {% extends 'base.html' %} {% block bootstrap3_title %}Medições{% endblock %} {% block content %}
-<div class="text-center">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.js"></script>
-  <h3>Sensores e Coletores:</h3>
-  <hr>
-  <h2>
-    <small>Unidade: {{ unit.name|title }}
-      <br> Local: {{ local.name|title }}
-      <br> Sensor: {{ sensor.name|title }}</small>
-  </h2>
-  <hr>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.js"></script>
 <div class="row">
   <div class="col-md-2 col-md-offset-2">
     <div class="panel panel-primary text-center">
       <div class="panel-heading">
-        <b>Maximo</b>
+        <b>Máximo</b>
       </div>
       <div class="panel-body">
         <h3 style="margin-top:10px;">{{ max|floatformat }}
@@ -28,7 +18,7 @@
   <div class="col-md-2">
     <div class="panel panel-primary text-center">
       <div class="panel-heading">
-        <b>Minimo</b>
+        <b>Minímo</b>
       </div>
       <div class="panel-body">
         <h3 style="margin-top:10px;">{{ min|floatformat }}
@@ -51,54 +41,71 @@
       </div>
     </div>
   </div>
+  <div class="col-md-2">
+    <div class="panel panel-primary text-center">
+      <div class="panel-heading">
+        <b>Controle</b>
+      </div>
+      <div class="panel-body">
+        <h3 style="margin-top:10px;">
+            <button type="button" class="btn btn-success">Ligar</button>
+            <button type="button" class="btn btn-danger">Desligar</button>
+        </h3>
+      </div>
+    </div>
+  </div>
 </div>
 
-<canvas id="sensorChart" height="70"></canvas>
+<canvas id="sensorChart" height="80px"></canvas>
 <script>
+  setTimeout(function () {
+    window.location.reload(0);
+  }, 2000);
   var ctx = document.getElementById("sensorChart");
   var data = JSON.parse('{{ data|safe }}');
   var chart = new Chart(ctx, {
     type: 'scatter',
     data: data,
     options: {
-      elements: {
-        line: {
-          steppedLine: 'after',
-          cubicInterpolationMode: 'default',
-        }
+      animation: {
+        duration: 0
       },
+      lineTension: 0,
+      lineWidth: 0.2,
       scales: {
         xAxes: [{
           ticks: {
-            callback: function (value) {
-              return new Date(value).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
-            },
+            min: {{ mindate }},
+      max: {{ maxdate }},
+  callback: function (value) {
+    return new Date(value).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+  },
           },
         }]
       },
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem, data) {
-            var label = data.datasets[tooltipItem.datasetIndex].label || '';
+  tooltips: {
+    callbacks: {
+      label: function (tooltipItem, data) {
+        var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
-            if (label) {
-              label += (': ');
-            }
-            label += new Date(tooltipItem.xLabel).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
-            label += ' - ' + tooltipItem.yLabel;
-            return label;
-          },
-          labelColor: function (tooltipItem, chart) {
-            return {
-              borderColor: 'rgb(255, 0, 0)',
-              backgroundColor: 'rgb(255, 0, 0)'
-            }
-          },
-          labelTextColor: function (tooltipItem, chart) {
-            return '#543453';
-          }
+        if (label) {
+          label += (': ');
         }
+        label += new Date(tooltipItem.xLabel).toLocaleTimeString('pt-BR', { hour: 'numeric', minute: 'numeric', second: 'numeric' });
+        label += ' - ' + tooltipItem.yLabel;
+        return label;
+      },
+      labelColor: function (tooltipItem, chart) {
+        return {
+          borderColor: 'rgb(255, 0, 0)',
+          backgroundColor: 'rgb(255, 0, 0)'
+        }
+      },
+      labelTextColor: function (tooltipItem, chart) {
+        return '#543453';
       }
+    }
+  }
     }
   });
 </script> {% endblock %}
