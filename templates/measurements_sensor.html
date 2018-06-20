@@ -48,8 +48,8 @@
       </div>
       <div class="panel-body">
         <h3 style="margin-top:10px;">
-            <button type="button" class="btn btn-success">Ligar</button>
-            <button type="button" class="btn btn-danger">Desligar</button>
+            <a href="{% url 'locals' item.id %}" class="btn btn-success">Ligar</a>
+            <a href="{% url 'locals' item.id %}" class="btn btn-danger">Desligar</a>
         </h3>
       </div>
     </div>

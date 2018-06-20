@@ -120,7 +120,6 @@ def sensors(request, unidade_pk, local_pk):
 @login_required
 def measurements_sensor_ajax(request, sensor_pk):
     measurements = models.SensorMeasure.objects.filter(sensor=sensor_pk, created_at__gte=(datetime.datetime.now() - datetime.timedelta(minutes=20)))
-    print("dados", measurements)
     return JsonResponse(
         get_sensor_data(measurements),
         safe=False
@@ -150,9 +149,6 @@ def get_sensor_data(measurements):
 
 def unix_time_millis(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
-    print(dt)
-    print(epoch)
-    print(dt-epoch)
     return (dt - epoch).total_seconds() * 1000.0
 
 
@@ -175,6 +171,16 @@ def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
         'maxdate':int(unix_time_millis(parser.parse(str(measurements.last().created_at)).replace(tzinfo=None))),
     }
     return render(request, 'measurements_sensor.html', param)
+
+
+@login_required
+def lampada_ligar():
+    
+
+
+@login_required
+def lampada_desligar():
+
 
 # @login_required
 # def measurements_all(request, unidade_pk, local_pk):

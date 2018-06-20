@@ -20,5 +20,9 @@ urlpatterns = [
          views.measurements_sensor, name='measurements_sensor'),
 
     path('ajax/sensor/<int:sensor_pk>',
-         views.measurements_sensor_ajax, name='measurements_sensor_ajax')
+         views.measurements_sensor_ajax, name='measurements_sensor_ajax'),
+    
+    path('lampada/ligar', views.lampada_ligar, name='ligar_lampada'),
+
+    path('lampada/desligar', views.lampada_desligar, name='desligar_lampada')
 ]
