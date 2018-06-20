@@ -72,6 +72,5 @@ def run():
     client.connect(brokerApi, brokerPort, 60)
 
     client.loop_start()
-
     while 1:
         time.sleep(1)

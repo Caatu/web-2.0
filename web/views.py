@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Max, Min, Avg
 import web.models as models
 from web.forms import UnitForm, LocalForm
+from scripts.mqtt import *
 
 
 class CustomSerializer(Serializer):
@@ -172,15 +173,28 @@ def measurements_sensor(request, unidade_pk, local_pk, sensor_pk):
     }
     return render(request, 'measurements_sensor.html', param)
 
+def enviar_msg(mensagem):
+    brokerUserName = "gustavoguerino2@gmail.com"
+    brokerPassword = "66db79f5"
+    brokerApi = "mqtt.dioty.co"
+    brokerPort = 1883
+    client = mqtt.Client()
+    client.username_pw_set(username=brokerUserName, password=brokerPassword)
+    client.connect(brokerApi, brokerPort, 60)
+    client.loop_start()
+    client.subscribe("/gustavoguerino2@gmail.com/lampada")
+    client.publish("/gustavoguerino2@gmail.com/lampada", mensagem)
 
 @login_required
-def lampada_ligar():
-    
+def lampada_ligar(request):
+    enviar_msg("1")
+    return redirect(request.build_absolute_uri())    
 
 
 @login_required
-def lampada_desligar():
-
+def lampada_desligar(request):
+    enviar_msg("0")
+    return redirect(request.build_absolute_uri())
 
 # @login_required
 # def measurements_all(request, unidade_pk, local_pk):
